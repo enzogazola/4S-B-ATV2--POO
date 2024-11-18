@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanban - Gerenciamento de Tarefas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            padding-top: 50px;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 80%;
+            max-width: 1200px;
+            height: 90vh;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .task-column {
+            width: 30%;
+            padding: 15px;
+            background-color: #f0f0f0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .task-column h2 {
+            color: #333;
+            text-align: center;
+        }
+
+        .task-card {
+            background-color: #fff;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .task-card:hover {
+            transform: scale(1.05);
+        }
+
+        .task-card h3 {
+            margin: 0;
+            color: #4CAF50;
+        }
+
+        .task-card p {
+            margin: 10px 0;
+            color: #555;
+        }
+
+        .task-card .priority {
+            font-weight: bold;
+            color: #FF5722;
+        }
+
+        .task-card button {
+            background-color: #FF5722;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .task-card button:hover {
+            background-color: #e64a19;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="task-column" id="todo">
+        <h2>A Fazer</h2>
+        <!-- Tarefas da coluna A Fazer vão aqui -->
+    </div>
+
+    <div class="task-column" id="in-progress">
+        <h2>Em Progresso</h2>
+        <!-- Tarefas da coluna Em Progresso vão aqui -->
+    </div>
+
+    <div class="task-column" id="done">
+        <h2>Concluído</h2>
+        <!-- Tarefas da coluna Concluído vão aqui -->
+    </div>
+</div>
+
+<script>
+    // Função para buscar as tarefas da API e exibi-las nas respectivas colunas
+    fetch('http://localhost:8081/tasks')
+        .then(response => response.json())
+        .then(tasks => {
+            tasks.forEach(task => {
+                const taskElement = document.createElement('div');
+                taskElement.classList.add('task-card');
+                taskElement.innerHTML = `
+                    <h3>${task.title}</h3>
+                    <p class="priority">Prioridade: ${task.priority}</p>
+                    <p>${task.description}</p>
+                    <p>Data de vencimento: ${task.dueDate}</p>
+                `;
+
+                // Adicionar a tarefa à coluna apropriada
+                const column = document.getElementById(task.column.toLowerCase().replace(" ", "-"));
+                column.appendChild(taskElement);
+            });
+        })
+        .catch(error => console.error('Erro ao carregar tarefas:', error));
+</script>
+
+</body>
+</html>
